@@ -76,6 +76,20 @@ namespace Sun {
         static _T quadrature(std::function<_T(_T)> f, _T a, _T b) {
             return quadrature5(f, a, b);
         }
+
+        //对2元函数f(x,y)x[a,b],y[c,d]积分
+        template<class _T>
+        static _T quadrature(std::function<_T(_T, _T)> f, _T a, _T b, _T c, _T d) {
+            _T res = 0.;
+            _T g = (b - a) * 0.5;
+            for (int i = 0; i < 5; ++i) {
+                _T x = (roots_5[i] * (b - a) + a + b) * 0.5;
+                auto func = std::bind(f, x, std::placeholders::_1);
+                _T tmp = quadrature<_T>(func, c, d);
+                res += tmp * g * cofs_5[i];
+            }
+            return res;
+        }
     protected:
         
         static double roots_2[2];
